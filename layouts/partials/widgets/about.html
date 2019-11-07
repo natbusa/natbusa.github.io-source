@@ -23,11 +23,9 @@
   <div class="col-12 col-lg-4">
     <div id="profile">
 
-      {{ if site.Params.gravatar }}
-      <img class="portrait" src="https://s.gravatar.com/avatar/{{ md5 $person.email }}?s=200')" alt="Avatar">
-      {{ else if $avatar }}
-      {{ $avatar_image := $avatar.Fill "250x250 Center" }}
-      <img class="portrait" src="{{ $avatar_image.RelPermalink }}" alt="Avatar">
+      {{ if $avatar }}
+      {{ $avatar_image := $avatar.Fill "300x200 Center" }}
+      {{ $avatar_image.RelPermalink }}
       {{ end }}
 
       <div class="portrait-title">
