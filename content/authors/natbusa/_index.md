@@ -83,8 +83,8 @@ user_groups: []
 #- Visitors
 ---
 
-Senior Director of Data Science, AI, Big Data Technologies.
+Senior Director of Data Engineering, Science, Analytics, Reporting, AI,  and Big Data. Managing all data related activities & teams. Reporting directly to CFO/CEO.
 
-Chief Data Scientist, Director of Data Engineering. Natalino Busa is skilled at defining, designing and implementing custom big/fast data solutions for data-driven applications such as predictive analytics, personalized marketing, fraud detection and business event monitoring.
+Natalino Busa is skilled at defining, designing and implementing custom big/fast data solutions for data-driven applications such as predictive analytics, personalized marketing, fraud detection and business event monitoring. Proficient in porting traditional ETL to Open Source data solutions.
 
-Natalino has successfully led teams across the world in a number of domains with effective, fit-for-purpose and reliable solutions. He provides a unique combination of business vision, applied data science and engineering skills.
+Natalino has successfully led teams across the world with effective, fit-for-purpose and reliable solutions. He provides a unique combination of business vision, applied data science and engineering skills.

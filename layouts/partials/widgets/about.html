@@ -24,8 +24,8 @@
     <div id="profile">
 
       {{ if $avatar }}
-      {{ $avatar_image := $avatar.Fill "300x200 Center" }}
-      {{ $avatar_image.RelPermalink }}
+      {{ $avatar_image := $avatar.Fill "600x400 Center" }}
+      <img class="img-fluid rounded mx-auto" src="{{ $avatar_image.RelPermalink }}" alt="Avatar">
       {{ end }}
 
       <div class="portrait-title">
@@ -64,17 +64,19 @@
         {{ end }}
       </ul>
 
-      <p class='mt-3'><i class="fas fa-map-marker-alt"></i> Singapore, Amsterdam <br />
-        {{ if $data.email }}
+      <p class='mt-3'><i class="fas fa-map-marker-alt"></i> Singapore, Amsterdam</p>
+      <p>
+      {{ if $data.email }}
         <i class="fas fa-envelope " aria-hidden="true"></i>
         <span id="person-email"><a href="mailto:{{ $data.email }}">{{ $data.email }}</a></span>
-        {{ end }}
 
+      {{ end }}
+      <br />
       {{ with $data.phone }}
         <i class="fas fa-phone" aria-hidden="true"></i>
         <span id="person-telephone"><a href="tel:{{ . }}">{{ . }}</a></span>
       {{ end }}
-    </p>
+       </p>
 
     </div>
   </div>
