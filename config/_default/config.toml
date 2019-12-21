@@ -36,7 +36,7 @@ enableEmoji = true
 footnotereturnlinkcontents = "<sup>^</sup>"
 ignoreFiles = ["\\.ipynb$", ".ipynb_checkpoints$", "\\.Rmd$", "\\.Rmarkdown$", "_files$", "_cache$"]
 
-summaryLength = 140
+# summaryLength = 140
 
 [outputs]
   home = [ "HTML", "RSS", "JSON", "WebAppManifest" ]
