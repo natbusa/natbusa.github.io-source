@@ -10,15 +10,14 @@ all: $(INDEX_FILES)
 	hugo
 
 %.md: %.yml $(NB_FILES)
-	jupyter nbconvert $(@D)/*.ipynb --to markdown --NbConvertApp.output_files_dir=.
+	mkdir -p $(@D)/build
+	jupyter nbconvert $(@D)/*.ipynb --to markdown --output-dir=build
 	rm -f $@
-	cat $(@D)/*.md | \
+	cat $(@D)/build/*.md | \
 	sed  \
 		-e "s/^\s*#\s*[^#].*$$//" \
-	  -e 's/<table border="1" class="dataframe">/<table>/' > $(@D)/body.md
-	cat $< $(@D)/body.md > $@
-	ls *.md | grep -v $@ | xargs rm
-	rm -f $(@D)/body.md
+	  -e 's/<table border="1" class="dataframe">/<table>/' > $(@D)/build/body.md
+	cat $< $(@D)/build/body.md > $@
 
 clean:
 	rm -rf public/*
