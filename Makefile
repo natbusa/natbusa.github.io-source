@@ -13,9 +13,11 @@ all: $(INDEX_FILES)
 	jupyter nbconvert $(@D)/*.ipynb --to markdown --NbConvertApp.output_files_dir=.
 	rm -f $@
 	cat $(@D)/*.md | \
-	sed  "s/^\s*#\s*[^#].*$$//" | \
-	sed 's/<table border="1" class="dataframe">/<table>/' > $(@D)/body.md
+	sed  \
+		-e "s/^\s*#\s*[^#].*$$//" \
+	  -e 's/<table border="1" class="dataframe">/<table>/' > $(@D)/body.md
 	cat $< $(@D)/body.md > $@
+	ls *.md | grep -v $@ | xargs rm
 	rm -f $(@D)/body.md
 
 clean:
