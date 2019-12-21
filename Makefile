@@ -11,8 +11,7 @@ all: $(INDEX_FILES)
 
 %.md: %.yml $(NB_FILES)
 	mkdir -p $(@D)/build
-	jupyter nbconvert $(@D)/*.ipynb --to markdown --output-dir=build
-	rm -f $@
+	jupyter nbconvert $(@D)/*.ipynb --to markdown --output-dir=$(@D)/build
 	cat $(@D)/build/*.md | \
 	sed  \
 		-e "s/^\s*#\s*[^#].*$$//" \
@@ -22,7 +21,6 @@ all: $(INDEX_FILES)
 clean:
 	rm -rf public/*
 	rm -rf resources/*
-	rm -f $(INDEX_FILES)
 
 
 .PHONY: clean
