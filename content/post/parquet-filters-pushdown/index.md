@@ -43,12 +43,50 @@ dfc.project.load('minimal')
 ```
 
      [datafaucet] NOTICE parquet.ipynb:engine:__init__ | Connecting to spark master: local[*]
+     [datafaucet] NOTICE parquet.ipynb:engine:__init__ | Engine context spark:2.4.4 successfully started
+
+
+
+
+
+    <datafaucet.project.Project at 0x7ff5c84d3748>
+
 
 
 
 ```python
 dfc.metadata.profile()
 ```
+
+
+
+
+    profile: minimal
+    variables: {}
+    engine:
+        type: spark
+        master: local[*]
+        jobname:
+        timezone: naive
+        submit:
+            jars: []
+            packages: []
+            pyfiles:
+            files:
+            repositories:
+            conf:
+    providers:
+        local:
+            service: file
+            path: data
+    resources: {}
+    logging:
+        level: info
+        stdout: true
+        file: datafaucet.log
+        kafka: []
+
+
 
 ### Filter and projections Filters push down on parquet files
 
@@ -62,6 +100,58 @@ df = dfc.range(10000).cols.create('g').randchoice([0,1,2,3])
 df.cols.groupby('g').agg('count').data.grid()
 ```
 
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>g</th>
+      <th>id</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>0</td>
+      <td>2488</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>1</td>
+      <td>2488</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>3</td>
+      <td>2632</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>2</td>
+      <td>2392</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
+
 #### Save data as parquet objects
 
 
@@ -69,10 +159,75 @@ df.cols.groupby('g').agg('count').data.grid()
 df.repartition('g').save('local', 'groups.parquet');
 ```
 
+     [datafaucet] INFO parquet.ipynb:engine:save_log | save
+
+
 
 ```python
 dfc.list('data/save/groups.parquet').data.grid()
 ```
+
+
+
+
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table>
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>name</th>
+      <th>type</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0</td>
+      <td>g=2</td>
+      <td>DIRECTORY</td>
+    </tr>
+    <tr>
+      <td>1</td>
+      <td>g=1</td>
+      <td>DIRECTORY</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>g=3</td>
+      <td>DIRECTORY</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>g=0</td>
+      <td>DIRECTORY</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>_SUCCESS</td>
+      <td>FILE</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>._SUCCESS.crc</td>
+      <td>FILE</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+
+
 
 #### Read data parquet objects (with pushdown filters)
 
@@ -92,11 +247,22 @@ df = spark.read.load('data/save/groups.parquet')
 df.explain()
 ```
 
+    == Physical Plan ==
+    *(1) FileScan parquet [id#91L,g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 4, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<id:bigint>
+
+
 
 ```python
 ### Pushdown only column selection
 df.groupby('g').count().explain()
 ```
+
+    == Physical Plan ==
+    *(2) HashAggregate(keys=[g#92], functions=[count(1)])
+    +- Exchange hashpartitioning(g#92, 200)
+       +- *(1) HashAggregate(keys=[g#92], functions=[partial_count(1)])
+          +- *(1) FileScan parquet [g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 4, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<>
+
 
 
 ```python
@@ -104,8 +270,23 @@ df.groupby('g').count().explain()
 df.filter('id>100').explain()
 ```
 
+    == Physical Plan ==
+    *(1) Project [id#91L, g#92]
+    +- *(1) Filter (isnotnull(id#91L) && (id#91L > 100))
+       +- *(1) FileScan parquet [id#91L,g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 4, PartitionFilters: [], PushedFilters: [IsNotNull(id), GreaterThan(id,100)], ReadSchema: struct<id:bigint>
+
+
 
 ```python
 
 df.filter('id>100 and g=1').groupby('g').count().explain()
 ```
+
+    == Physical Plan ==
+    *(2) HashAggregate(keys=[g#92], functions=[count(1)])
+    +- Exchange hashpartitioning(g#92, 200)
+       +- *(1) HashAggregate(keys=[g#92], functions=[partial_count(1)])
+          +- *(1) Project [g#92]
+             +- *(1) Filter (isnotnull(id#91L) && (id#91L > 100))
+                +- *(1) FileScan parquet [id#91L,g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 1, PartitionFilters: [isnotnull(g#92), (g#92 = 1)], PushedFilters: [IsNotNull(id), GreaterThan(id,100)], ReadSchema: struct<id:bigint>
+
