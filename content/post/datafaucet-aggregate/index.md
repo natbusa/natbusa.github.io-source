@@ -28,59 +28,31 @@ image:
 projects: []
 ---
 
-
-
-Aggregations are an important step while processing dataframes and tabular data
-in general. And therefore, they should be as simple as possible to implement.
-Some notable data aggregation semantics are provided by pandas, spark and the SQL
-language.
-
-When designing an aggregation API method, the following characteristics make in
-my opinion a good aggregation method.
-
--   easily perform aggregation on a column or a set of columns
--   easily perform multiple aggregation functions on the same columns
--   selectively perform differently aggregations on different columns
-
-As an nice to have to this list, it would be nice to apply aggregation functions
-by passing the function name as a string. A good aggregation method should allow
-all the above with minimal amount of code required.
-
 ## Getting started
 
 Let's start spark using datafaucet.
-
 
 ```python
 import datafaucet as dfc
 ```
 
-
 ```python
-
+# let's start the engine
 dfc.engine('spark')
 ```
 
-
-
-
     <datafaucet.spark.engine.SparkEngine at 0x7fbdb66f2128>
 
-
-
-
 ```python
-
+# expose the engine context
 spark  = dfc.context()
 ```
 
 ## Generating Data
 
-
 ```python
 df = spark.range(100)
 ```
-
 
 ```python
 df = (df
@@ -91,13 +63,9 @@ df = (df
 )
 ```
 
-
 ```python
 df.data.grid(5)
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -169,23 +137,16 @@ df.data.grid(5)
 </table>
 </div>
 
-
-
 ## Pandas
 Let's start by looking how Pandas does aggregations. Pandas is quite flexible on the points noted above and uses hierachical indexes on both columns and rows to store the aggregation names and the groupby values. Here below a simple aggregation and a more complex one with groupby and multiple aggregation functions.
-
 
 ```python
 pf = df.data.collect()
 ```
 
-
 ```python
 pf[['n', 'x', 'y']].agg(['max'])
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -221,9 +182,6 @@ pf[['n', 'x', 'y']].agg(['max'])
 </table>
 </div>
 
-
-
-
 ```python
 agg = (pf[['g','n', 'x', 'y']]
            .groupby(['g', 'n'])
@@ -234,9 +192,6 @@ agg = (pf[['g','n', 'x', 'y']]
            }))
 agg
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -340,20 +295,14 @@ agg
 </table>
 </div>
 
-
-
 ### Stacking 
 In pandas, you can stack the multiple column index and move it to a column, as below. The choice of stacking or not after aggregation depends on wht you want to do later with the data. Next to the extra index, stacking also explicitely code NaN / Nulls for evry aggregation which is not shared by each column (in case of dict of aggregation functions.
-
 
 ```python
 agg = pf[['g', 'x', 'y']].groupby(['g']).agg(['min', 'max', 'mean'])
 agg = agg.stack(0)
 agg
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -430,38 +379,23 @@ agg
 </table>
 </div>
 
-
-
 ### Index as columns
 Index in pandas is not the same as column data, but you can easily move from one to the other, as shown below, by combine the name information of the various index levels with the values of each level.
-
 
 ```python
 agg.index.names
 ```
 
-
-
-
     FrozenList(['g', None])
 
-
-
-
 ```python
-
+# for example these are the value from the first level of the index
 agg.index.get_level_values(0)
 ```
 
-
-
-
     Int64Index([0, 0, 1, 1, 2, 2], dtype='int64', name='g')
 
-
-
 The following script will iterate through all the levels and create a column with the name of the original index level otherwise will use `_<level#>` if no name is available. Remember that pandas allows indexes to be nameless.
-
 
 ```python
 levels = agg.index.names
@@ -469,15 +403,11 @@ for (name, lvl) in zip(levels, range(len(levels))):
     agg[name or f'_{lvl}'] = agg.index.get_level_values(lvl)
 ```
 
-
 ```python
-
+#now the index is standard columns, drop the index
 agg.reset_index(inplace=True, drop=True)
 agg
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -557,18 +487,12 @@ agg
 </table>
 </div>
 
-
-
 ## Spark (Python)
 Spark aggregation is a bit simpler, but definitely very flexible, so we can achieve the same result with a little more work in some cases. Here below a simple example and a more complex one, reproducing the same three cases as above.
-
 
 ```python
 df.select('n', 'x', 'y').agg({'n':'max', 'x':'max', 'y':'max'}).toPandas()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -604,10 +528,7 @@ df.select('n', 'x', 'y').agg({'n':'max', 'x':'max', 'y':'max'}).toPandas()
 </table>
 </div>
 
-
-
 Or with a little more work we can exactly reproduce the pandas case:
-
 
 ```python
 from pyspark.sql import functions as F
@@ -618,9 +539,6 @@ df.select('n', 'x', 'y').agg(
     F.max('x').alias('x'), 
     F.max('y').alias('y')).toPandas()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -658,10 +576,7 @@ df.select('n', 'x', 'y').agg(
 </table>
 </div>
 
-
-
 More complicated aggregation cannot be called by string and must be provided by functions. Here below a way to reproduce groupby aggregation as in the second pandas example:
-
 
 ```python
 (df
@@ -677,9 +592,6 @@ More complicated aggregation cannot be called by string and must be provided by 
 ).toPandas()
         
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -773,20 +685,16 @@ More complicated aggregation cannot be called by string and must be provided by 
 </table>
 </div>
 
-
-
 ### Stacking
 
 Stacking, as in pandas, can be used to expose the column name on a different index column, unfortunatel stack is currently available only in the SQL initerface and not very flexible as in the pandas counterpart (https://spark.apache.org/docs/2.3.0/api/sql/#stack)
 
 You could use pyspark `expr` to call the SQL function as explained here (https://stackoverflow.com/questions/42465568/unpivot-in-spark-sql-pyspark). However, another way would be to union the various results as shown here below.
 
-
 ```python
 agg = pf[['g', 'x', 'y']].groupby(['g']).agg(['min', 'max', 'mean'])
 a
 ```
-
 
 ```python
 from pyspark.sql import functions as F
@@ -812,9 +720,6 @@ df
     )
 ).toPandas()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -894,12 +799,9 @@ df
 </table>
 </div>
 
-
-
 ### Generatring aggregating code
 
 The code above looks complicated, but is very regular, hence we can generate it! What we need is a to a list of lists for the aggregation functions as shown here below:
-
 
 ```python
 dfs = []
@@ -923,18 +825,13 @@ for c in ['x','y']:
          func: Column<b'max(y) AS `max`'>
          func: Column<b'avg(y) AS `mean`'>
 
-
 The dataframes in this generator have all the same columns and can be reduced with union calls
-
 
 ```python
 from functools import reduce
 
 reduce(lambda a,b: a.union(b), dfs).toPandas()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1007,8 +904,6 @@ reduce(lambda a,b: a.union(b), dfs).toPandas()
 </table>
 </div>
 
-
-
 ## Meet DataFaucet agg
 
 One of the goal of datafaucet is to simplify analytics, data wrangling and data
@@ -1022,15 +917,11 @@ aggregations. The aggregation api is always in the form:
 
 Alternativaly, you can `find` instead of `get`
 
-
 ```python
-
+# simple aggregation by name
 d = df.cols.get('x').agg('distinct')
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1062,17 +953,11 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# simple aggregation (multiple) by name
 d = df.cols.get('x').agg(['distinct', 'avg'])
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1106,17 +991,11 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# simple aggregation (multiple) by name (stacked)
 d = df.cols.get('x').agg(['distinct', 'avg'], stack=True)
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1152,17 +1031,11 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# simple aggregation (multiple) by name (stacked, custom index name)
 d = df.cols.get('x').agg(['distinct', 'avg'], stack='colname')
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1198,17 +1071,11 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# simple aggregation (multiple) by name and function
 d = df.cols.get('x').agg(['distinct', F.min, F.max, 'avg'])
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1246,17 +1113,11 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# multiple aggregation by name and function
 d = df.cols.get('x', 'y').agg(['distinct', F.min, F.max, 'avg'])
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1302,20 +1163,14 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# multiple aggregation (multiple) by name and function
 d = df.cols.get('x', 'y').agg({
     'x':['distinct', F.min], 
     'y':['distinct', 'max']})
 
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1357,19 +1212,13 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# multiple aggregation (multiple) by name and function (stacked)
 d = df.cols.get('x', 'y').agg({
     'x':['distinct', F.min], 
     'y':['distinct', 'max']}, stack=True)
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1414,11 +1263,8 @@ d.data.grid()
 </table>
 </div>
 
-
-
-
 ```python
-
+# grouped by, multiple aggregation (multiple) by name and function (stacked)
 d = df.cols.get('x', 'y').groupby('g','n').agg({
     'x':['distinct', F.min], 
     'y':['distinct', 'max']}, stack=True)
@@ -1428,7 +1274,6 @@ d.data.grid()
 ### Extended list of aggregation
 
 An extended list of aggregation is available, both by name and by function in the datafaucet library
-
 
 ```python
 from datafaucet.spark import aggregations as A
@@ -1442,9 +1287,6 @@ d = df.cols.get('x', 'y').groupby('g','n').agg([
 
 d.data.grid()
 ```
-
-
-
 
 <div>
 <style scoped>
@@ -1597,9 +1439,6 @@ d.data.grid()
   </tbody>
 </table>
 </div>
-
-
-
 
 ```python
 
