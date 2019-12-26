@@ -49,7 +49,7 @@ dfc.project.load('minimal')
 
 
 
-    <datafaucet.project.Project at 0x7ff5c84d3748>
+    <datafaucet.project.Project at 0x7f6e3bfe9630>
 
 
 
@@ -129,22 +129,22 @@ df.cols.groupby('g').agg('count').data.grid()
     <tr>
       <td>0</td>
       <td>0</td>
-      <td>2488</td>
+      <td>2504</td>
     </tr>
     <tr>
       <td>1</td>
       <td>1</td>
-      <td>2488</td>
+      <td>2320</td>
     </tr>
     <tr>
       <td>2</td>
       <td>3</td>
-      <td>2632</td>
+      <td>2640</td>
     </tr>
     <tr>
       <td>3</td>
       <td>2</td>
-      <td>2392</td>
+      <td>2536</td>
     </tr>
   </tbody>
 </table>
@@ -238,12 +238,14 @@ spark = dfc.engine().context
 
 
 ```python
-df = spark.read.load('data/save/groups.parquet')
+df = dfc.load('data/save/groups.parquet')
 ```
+
+     [datafaucet] INFO parquet.ipynb:engine:load_log | load
+
 
 
 ```python
-### No pushdown on the physical plan
 df.explain()
 ```
 
@@ -253,40 +255,234 @@ df.explain()
 
 
 ```python
+def explainSource(obj):
+    for s in obj._jdf.queryExecution().simpleString().split('\n'):
+        if 'FileScan' in s:
+            params = [
+                'Batched', 
+                'Format', 
+                'Location',
+                'PartitionCount', 
+                'PartitionFilters', 
+                'PushedFilters',
+                'ReadSchema']
+            
+
+            res = {}
+
+            first, _, rest = s.partition(f'{params[0]}:')
+
+            for i in range(len(params[1:])):
+                first, _, rest = rest.partition(f'{params[i+1]}:')
+                res[params[i]]=first[1:-2]
+
+            res[params[-1]]=rest[1:]
+            
+
+            del res['Location']
+            
+            return dfc.yaml.YamlDict(res)
+```
+
+
+```python
+### No pushdown on the physical plan
+
+explainSource(df)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '4'
+    PartitionFilters: '[]'
+    PushedFilters: '[]'
+    ReadSchema: struct<id:bigint>
+
+
+
+
+```python
 ### Pushdown only column selection
-df.groupby('g').count().explain()
+res = df.groupby('g').count()
+explainSource(res)
 ```
 
-    == Physical Plan ==
-    *(2) HashAggregate(keys=[g#92], functions=[count(1)])
-    +- Exchange hashpartitioning(g#92, 200)
-       +- *(1) HashAggregate(keys=[g#92], functions=[partial_count(1)])
-          +- *(1) FileScan parquet [g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 4, PartitionFilters: [], PushedFilters: [], ReadSchema: struct<>
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '4'
+    PartitionFilters: '[]'
+    PushedFilters: '[]'
+    ReadSchema: struct<>
+
 
 
 
 ```python
 
-df.filter('id>100').explain()
+res = df.filter('id>100')
+explainSource(res)
 ```
 
-    == Physical Plan ==
-    *(1) Project [id#91L, g#92]
-    +- *(1) Filter (isnotnull(id#91L) && (id#91L > 100))
-       +- *(1) FileScan parquet [id#91L,g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 4, PartitionFilters: [], PushedFilters: [IsNotNull(id), GreaterThan(id,100)], ReadSchema: struct<id:bigint>
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '4'
+    PartitionFilters: '[]'
+    PushedFilters: '[IsNotNull(id), GreaterThan(id,100)]'
+    ReadSchema: struct<id:bigint>
+
 
 
 
 ```python
 
-df.filter('id>100 and g=1').groupby('g').count().explain()
+res = df.filter('id>100 and g=1').groupby('g').count()
+explainSource(res)
 ```
 
-    == Physical Plan ==
-    *(2) HashAggregate(keys=[g#92], functions=[count(1)])
-    +- Exchange hashpartitioning(g#92, 200)
-       +- *(1) HashAggregate(keys=[g#92], functions=[partial_count(1)])
-          +- *(1) Project [g#92]
-             +- *(1) Filter (isnotnull(id#91L) && (id#91L > 100))
-                +- *(1) FileScan parquet [id#91L,g#92] Batched: true, Format: Parquet, Location: InMemoryFileIndex[file:/home/natbusa/Projects/datafaucet/examples/tutorial/data/save/groups.parquet], PartitionCount: 1, PartitionFilters: [isnotnull(g#92), (g#92 = 1)], PushedFilters: [IsNotNull(id), GreaterThan(id,100)], ReadSchema: struct<id:bigint>
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '1'
+    PartitionFilters: '[isnotnull(g#92), (g#92 = 1)]'
+    PushedFilters: '[IsNotNull(id), GreaterThan(id,100)]'
+    ReadSchema: struct<id:bigint>
+
+
+
+
+```python
+
+res = df.filter('id>100 and (g=2 or g=3)').groupby('g').count()
+explainSource(res)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '2'
+    PartitionFilters: '[((g#92 = 2) || (g#92 = 3))]'
+    PushedFilters: '[IsNotNull(id), GreaterThan(id,100)]'
+    ReadSchema: struct<id:bigint>
+
+
+
+
+```python
+
+res = df.filter('id>100 and g>1').groupby('g').count()
+explainSource(res)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '2'
+    PartitionFilters: '[isnotnull(g#92), (g#92 > 1)]'
+    PushedFilters: '[IsNotNull(id), GreaterThan(id,100)]'
+    ReadSchema: struct<id:bigint>
+
+
+
+
+```python
+
+res = df.filter('id>100 and g>1').filter('id<500 and g=2').groupby('g').count()
+explainSource(res)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '1'
+    PartitionFilters: '[isnotnull(g#92), (g#92 > 1), (g#92 = 2)]'
+    PushedFilters: '[IsNotNull(id), GreaterThan(id,100), LessThan(id,500)]'
+    ReadSchema: struct<id:bigint>
+
+
+
+### When pushdown filters are NOT applied.
+
+#### Avoid caching and actions of read data 
+Avoid cache(), count() or other action on data, as they will act as a "wall" for filter operations to be pushed down the parquet reader. On the contrary, registering the dataframe as a temorary table is OK. Please be aware that these operation could be hidden in your function call stack, so be always sure that the filters are as close as possible to the read operation.
+
+#### Spark will only read the same data once per session
+Once a parquet file has been read in a cached/unfiltered way, any subsequent read operation will fail to push down the filters, as spark assumes that the data has already been loaded once.
+
+
+```python
+df = dfc.load('data/save/groups.parquet')
+df.cache()
+```
+
+     [datafaucet] INFO parquet.ipynb:engine:load_log | load
+
+
+
+
+
+    DataFrame[id: bigint, g: int]
+
+
+
+
+```python
+
+res = df.filter('id>100 and g=1').groupby('g').count()
+explainSource(res)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '4'
+    PartitionFilters: '[]'
+    PushedFilters: '[]'
+    ReadSchema: struct<id:bigint>
+
+
+
+
+```python
+
+df = dfc.load('data/save/groups.parquet')
+```
+
+     [datafaucet] INFO parquet.ipynb:engine:load_log | load
+
+
+
+```python
+res = df.filter('id>100 and g=1').groupby('g').count()
+explainSource(res)
+```
+
+
+
+
+    Batched: 'true'
+    Format: Parquet
+    PartitionCount: '4'
+    PartitionFilters: '[]'
+    PushedFilters: '[]'
+    ReadSchema: struct<id:bigint>
+
 
