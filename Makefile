@@ -12,7 +12,7 @@ all: $(INDEX_FILES)
 %.md: %.yml $(NB_FILES)
 	mkdir -p $(@D)/build
 	jupyter nbconvert $(@D)/*.ipynb --to markdown --output-dir=$(@D)/build
-	cat $(@D)/build/*.md | \
+	cat -s $(@D)/build/*.md | \
 	sed  \
 		-e "s/^\s*#\s*[^#].*$$//" \
 	  -e 's/<table border="1" class="dataframe">/<table>/' > $(@D)/build/body.md
