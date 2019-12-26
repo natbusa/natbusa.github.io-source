@@ -30,4 +30,13 @@ clean:
 	find content -type f -name '*.body.md' | xargs rm -f
 	find content -type f -name 'build' | xargs rm -rf
 
-.PHONY: clean
+clean_target:
+	rm -rf public/*
+	rm -rf resources/*
+
+clean_source:
+	find content -type f -name '*.ipynb.jq' | xargs rm -f
+	find content -type f -name '*.body.md' | xargs rm -f
+	find content -type f -name 'build' | xargs rm -rf
+
+.PHONY: clean clean_source clean_target
