@@ -8,7 +8,6 @@ authors: [natbusa]
 tags: [analytics, pyspark,]
 categories: [datafaucet]
 date: 2019-12-24
-lastmod: 2019-12-24
 featured: false
 draft: false
 
