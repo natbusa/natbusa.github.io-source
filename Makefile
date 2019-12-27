@@ -1,3 +1,5 @@
+SHELL:=/bin/bash
+
 YML_FILES := $(shell find content -type f -name 'index.yml')
 INDEX_FILES := $(patsubst %.yml,%.md,$(YML_FILES))
 
