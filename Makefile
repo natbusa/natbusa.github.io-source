@@ -4,15 +4,11 @@ INDEX_FILES := $(patsubst %.yml,%.md,$(YML_FILES))
 NB_FILES := $(shell find content -type f -name '*.ipynb')
 NB_FILES_JQ := $(patsubst %.ipynb,%.ipynb.jq,$(NB_FILES))
 
-# $(info $(YML_FILES))
-# $(info $(INDEX_FILES))
-# $(info $(NB_FILES))
-# $(info $(NB_FILES_JQ))
-
 all: $(INDEX_FILES)
 	hugo
+	make clean_tempfiles
 
-%.ipynb.jq: %.ipynb
+$(NB_FILES_JQ): %.ipynb.jq: %.ipynb
 	jq 'del(.cells[0])' $< > $@
 
 %.body.md: $(NB_FILES_JQ)
@@ -24,19 +20,18 @@ $(INDEX_FILES): %.md: %.yml %.body.md
 	cat $^ > $@
 
 clean:
-	rm -rf public/*
-	rm -rf resources/*
-	find content -type f -name '*.ipynb.jq' | xargs rm -f
-	find content -type f -name '*.body.md' | xargs rm -f
-	find content -type f -name 'build' | xargs rm -rf
+	make clean_target
+	make clean_tempfiles
 
 clean_target:
 	rm -rf public/*
 	rm -rf resources/*
 
-clean_source:
+clean_tempfiles:
 	find content -type f -name '*.ipynb.jq' | xargs rm -f
 	find content -type f -name '*.body.md' | xargs rm -f
-	find content -type f -name 'build' | xargs rm -rf
+	find content -type d -name 'build' | xargs rm -rf
+	find public -type f -name '*.ipynb.jq' | xargs rm -f
+	find public -type f -name '*.yml' | xargs rm -f
 
-.PHONY: clean clean_source clean_target
+.PHONY: clean clean_tempfiles clean_target
