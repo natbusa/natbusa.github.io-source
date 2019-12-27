@@ -5,6 +5,7 @@ NB_FILES := $(shell find content -type f -name '*.ipynb')
 NB_FILES_JQ := $(patsubst %.ipynb,%.ipynb.jq,$(NB_FILES))
 
 all: $(INDEX_FILES)
+	find content -type f -name '*.body.md' | xargs rm -f
 	hugo
 	make clean_tempfiles
 
@@ -18,6 +19,12 @@ $(NB_FILES_JQ): %.ipynb.jq: %.ipynb
 $(INDEX_FILES): %.md: %.yml %.body.md
 	mkdir -p $(@D)/build
 	cat $^ > $@
+
+publish:
+	./publish.sh
+
+serve:
+		./serve.sh start
 
 clean:
 	make clean_target
