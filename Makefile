@@ -24,7 +24,7 @@ publish:
 	./publish.sh
 
 serve:
-		./serve.sh start
+	./serve.sh start
 
 clean:
 	make clean_target
@@ -41,4 +41,4 @@ clean_tempfiles:
 	find public -type f -name '*.ipynb.jq' | xargs rm -f
 	find public -type f -name '*.yml' | xargs rm -f
 
-.PHONY: clean clean_tempfiles clean_target
+.PHONY: clean clean_tempfiles clean_target publish serve
