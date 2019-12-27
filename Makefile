@@ -7,8 +7,7 @@ NB_FILES := $(shell find content -type f -name '*.ipynb')
 NB_FILES_JQ := $(patsubst %.ipynb,%.ipynb.jq,$(NB_FILES))
 
 all: $(INDEX_FILES)
-	find content -type f -name '*.body.md' | xargs rm -f
-	find content -type f -name '*.ipynb.jq' | xargs rm -f
+	make clean_tempfiles
 	hugo
 	make clean_tempfiles
 
