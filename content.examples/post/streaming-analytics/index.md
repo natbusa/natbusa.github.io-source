@@ -9,7 +9,7 @@ tags: [analytics, streaming]
 categories: [architectures]
 date: 2017-02-07T16:28:27+08:00
 lastmod: 2017-02-07T16:28:27+08:00
-featured: false
+featured: true
 draft: false
 
 # Featured image

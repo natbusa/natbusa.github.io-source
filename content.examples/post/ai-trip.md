@@ -10,7 +10,7 @@ categories: [meetups]
 date: 2017-02-07T16:28:27+08:00
 lastmod: 2017-02-07T16:28:27+08:00
 featured: false
-draft: false
+draft: true
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.

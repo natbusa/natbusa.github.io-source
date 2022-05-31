@@ -9,7 +9,7 @@ tags: [analytics, pyspark,]
 categories: [datafaucet]
 date: 2019-12-24
 featured: false
-draft: false
+draft: true
 
 # Featured image
 # To use, add an image named `featured.jpg/png` to your page's folder.
@@ -26,7 +26,6 @@ image:
 #   Otherwise, set `projects = []`.
 projects: []
 ---
-
 Filters can be applied to parquet files to reduce the volume of the data loaded. In particular parquet objects support partition filters and regular row filtering. Spark dags if proprerly constructed can push down some of the filters to the parquet object reader. Here below you will fine a number of test cases when this works correctly and a number of scenario's where filters pushdown does not apply.  
 
 ```python

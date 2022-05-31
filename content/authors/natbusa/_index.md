@@ -1,6 +1,6 @@
 ---
 # Display name
-name: Natalino Busa
+name: 
 
 # Username (this should match the folder name)
 authors:
@@ -10,7 +10,7 @@ authors:
 superuser: true
 
 # Role/position
-role: Senior Director Data
+role: 
 
 # Organizations/Affiliations
 #organizations:
@@ -18,7 +18,7 @@ role: Senior Director Data
 #- url: http://www.selectcountstar.com
 
 # Short bio (displayed in user profile at end of posts)
-bio: Senior Director of Data Science, AI, Big Data Technologies.
+bio: Senior Director of Data Science, AI, ML, Data Engineering.
 
 interests:
     - Data Engineering
@@ -55,8 +55,8 @@ education:
 social:
 - icon: envelope
   icon_pack: fas
-  link: '#contact'  # For a direct email link, use "mailto:test@example.org".
-
+  link: 'mailto:natalino.busa@gmail.com'
+  
 - icon: linkedin
   icon_pack: fab
   link: http://www.linkedin.com/in/natbusa
@@ -79,12 +79,57 @@ email: "natalino.busa@gmail.com"
 # Organizational groups that you belong to (for People widget)
 #   Set this to `[]` or comment out if you are not using People widget.  
 user_groups: []
-#- Researchers
-#- Visitors
 ---
 
-Senior Director of Data Engineering, Science, Analytics, Reporting, AI,  and Big Data. Managing all data related activities & teams. Reporting directly to CFO/CEO.
+Senior Director of Engineering:
+Covering the full spectrum of
+Technology and Science in modern
+web/cloud applications: ML
+Engineering, Data Science Apps,
+Analytics, APIs, Security, Cloud,
+DevOps, AI, Big Data and Streaming
+Data.
 
-Natalino Busa is skilled at defining, designing and implementing custom big/fast data solutions for data-driven applications such as predictive analytics, personalized marketing, fraud detection and business event monitoring. Proficient in porting traditional ETL to Open Source data solutions.
+Managing all data related activities
+& teams. Reporting directly to CxOs
+and Management.
+Domains: predictive and prescriptive
+analytics, supply chain
+management, fintech, cryptotech,
+insuretech, ecommerce, fraud
+detection and business event
+monitoring.
+Natalino has successfully led teams
+across the world with effective,
+fit-for-purpose and reliable solutions.
+He provides a unique combination
+of business vision, applied data
+science and engineering skills.
 
-Natalino has successfully led teams across the world with effective, fit-for-purpose and reliable solutions. He provides a unique combination of business vision, applied data science and engineering skills.
+Chief Data Scientist, CTO, Technology Pioneer
+and Innovator with 20+ years experience in
+development, management and research of
+scalable AI and ML services and applications.
+Implements and executes on CEO strategies and
+visions delivering state-of-the-art architectures,
+and products. Proficient at translating marketing
+and product strategies into customer-centric
+services and experiences.
+Passionate about AI, Data science, Software
+Engineering, distributed computing,
+man-machine interfaces, AI and cloud
+computing.
+
+Seasoned technology lead, experienced in
+managing multi-functional local/distributed
+teams, for faster execution and time-to-delivery.
+People coach and motivator, stimulating
+work-and-learn environments, and technology
+growth in and around the company.
+He has worked in the past as chief engineer and
+scientist for Philips Research and ING Bank in
+the Netherlands and DBS bank in Singapore.
+More recently he has served as Chief Data
+Scientist and Principal Data Engineer for Teko
+and VnPay in Vietnam. Author for O'Reilly
+Media on Spark and Data Science Applications.
