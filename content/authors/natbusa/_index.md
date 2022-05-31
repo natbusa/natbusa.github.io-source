@@ -81,55 +81,19 @@ email: "natalino.busa@gmail.com"
 user_groups: []
 ---
 
-Senior Director of Engineering:
-Covering the full spectrum of
-Technology and Science in modern
-web/cloud applications: ML
-Engineering, Data Science Apps,
-Analytics, APIs, Security, Cloud,
-DevOps, AI, Big Data and Streaming
-Data.
+#### Profile
 
-Managing all data related activities
-& teams. Reporting directly to CxOs
-and Management.
-Domains: predictive and prescriptive
-analytics, supply chain
-management, fintech, cryptotech,
-insuretech, ecommerce, fraud
-detection and business event
-monitoring.
-Natalino has successfully led teams
-across the world with effective,
-fit-for-purpose and reliable solutions.
-He provides a unique combination
-of business vision, applied data
-science and engineering skills.
+I am an all-round Principal Data Scientist/Engineer, and an AI and Technology Innovator with decades of experience in development, management and research of scalable data-centric services and applications.
 
-Chief Data Scientist, CTO, Technology Pioneer
-and Innovator with 20+ years experience in
-development, management and research of
-scalable AI and ML services and applications.
-Implements and executes on CEO strategies and
-visions delivering state-of-the-art architectures,
-and products. Proficient at translating marketing
-and product strategies into customer-centric
-services and experiences.
-Passionate about AI, Data science, Software
-Engineering, distributed computing,
-man-machine interfaces, AI and cloud
-computing.
+Proficient at translating CxO strategies into data-driven, customer-centric solutions, I have successfully delivered data pipelines on state-of-the-art data architectures across multiple regions and organizations. I am a science and technology lead, people coach and motivator, who thrives in work-learn-grow environments. 
 
-Seasoned technology lead, experienced in
-managing multi-functional local/distributed
-teams, for faster execution and time-to-delivery.
-People coach and motivator, stimulating
-work-and-learn environments, and technology
-growth in and around the company.
-He has worked in the past as chief engineer and
-scientist for Philips Research and ING Bank in
-the Netherlands and DBS bank in Singapore.
-More recently he has served as Chief Data
-Scientist and Principal Data Engineer for Teko
-and VnPay in Vietnam. Author for O'Reilly
-Media on Spark and Data Science Applications.
+Skilled in Artificial Intelligence, Machine Learning, Deep Learning, Graph Analysis. Big Data analysis (unstructured data, pattern recognition, sentiment analysis, geo-spatial location and social network analysis), business digital transformation and technology strategy.
+
+#### Short Bio
+
+Natalino Busa is currently Head of Science and Technology at Stemly, 
+where he is currently developing a SaaS for supply-chain demand forecasting and optimization.
+
+He has worked in the past as chief engineer and scientist for Philips,ING Bank and Teradata in the Netherlands, DBS bank in Singapore and VnPay in
+Vietnam. Passionate about data science, data engineering, distributed computing,
+man-machine interfaces, AI and cloud computing.  
