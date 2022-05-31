@@ -81,15 +81,11 @@ email: "natalino.busa@gmail.com"
 user_groups: []
 ---
 
-#### Profile
-
 I am an all-round Principal Data Scientist/Engineer, and an AI and Technology Innovator with decades of experience in development, management and research of scalable data-centric services and applications.
 
 Proficient at translating CxO strategies into data-driven, customer-centric solutions, I have successfully delivered data pipelines on state-of-the-art data architectures across multiple regions and organizations. I am a science and technology lead, people coach and motivator, who thrives in work-learn-grow environments. 
 
 Skilled in Artificial Intelligence, Machine Learning, Deep Learning, Graph Analysis. Big Data analysis (unstructured data, pattern recognition, sentiment analysis, geo-spatial location and social network analysis), business digital transformation and technology strategy.
-
-#### Short Bio
 
 Natalino Busa is currently Head of Science and Technology at Stemly, 
 where he is currently developing a SaaS for supply-chain demand forecasting and optimization.
